@@ -3,11 +3,9 @@ package com.hujiao.param;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Data
-public class ProductIdsParam extends PageParam{
+public class ProductIdParam {
     @NotNull
-    private List<Integer> categoryID;
-
+    private Integer productID;
 }

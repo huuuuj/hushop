@@ -4,9 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hujiao.clients.CategoryClient;
+import com.hujiao.clients.SearchClient;
 import com.hujiao.param.ProductHotParam;
 import com.hujiao.param.ProductIdsParam;
+import com.hujiao.param.ProductSearchParam;
+import com.hujiao.pojo.Picture;
 import com.hujiao.pojo.Product;
+import com.hujiao.product.mapper.PictureMapper;
 import com.hujiao.product.mapper.ProductMapper;
 import com.hujiao.product.service.ProductService;
 import com.hujiao.utils.R;
@@ -22,6 +26,11 @@ public class ProductServiceImpl implements ProductService {
     private CategoryClient categoryClient;
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private PictureMapper pictureMapper;
+
+    @Autowired
+    private SearchClient searchClient;
 
     /**
      * 查询分类下热门商品
@@ -82,5 +91,33 @@ public class ProductServiceImpl implements ProductService {
         List<Product> records = page.getRecords();
         long total = page.getTotal();
         return R.ok("success!",records,total);
+    }
+
+    @Override
+    public R detail(Integer categoryID) {
+        Product product = productMapper.selectById(categoryID);
+        return R.ok(product);
+    }
+
+    @Override
+    public R pictures(Integer productID) {
+        QueryWrapper<Picture> pictureQueryWrapper = new QueryWrapper<>();
+        pictureQueryWrapper.eq("product_id",productID);
+        List<Picture> pictures = pictureMapper.selectList(pictureQueryWrapper);
+        return R.ok(pictures);
+    }
+
+    /**
+     * 搜索全部商品数据进行es同步
+     * @return
+     */
+    @Override
+    public List<Product> allList() {
+        return productMapper.selectList(null);
+    }
+
+    @Override
+    public R search(ProductSearchParam param) {
+        return searchClient.searchProduct(param);
     }
 }

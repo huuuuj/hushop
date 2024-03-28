@@ -1,8 +1,6 @@
 package com.hujiao.product.controller;
 
-import com.hujiao.param.ProductHotParam;
-import com.hujiao.param.ProductIdsParam;
-import com.hujiao.param.ProductPromoParam;
+import com.hujiao.param.*;
 import com.hujiao.product.service.ProductService;
 import com.hujiao.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +52,25 @@ public class ProductController {
             return R.fail("error");
         }
         return productService.byCategory(param);
+    }
+
+    @PostMapping("detail")
+    public R detail(@RequestBody @Validated ProductIdParam param, BindingResult result){
+        if (result.hasErrors()){
+            return R.fail("error");
+        }
+        return productService.detail(param.getProductID());
+    }
+    @PostMapping("pictures")
+    public R pictures(@RequestBody @Validated ProductIdParam param, BindingResult result){
+        if (result.hasErrors()){
+            return R.fail("error");
+        }
+        return productService.pictures(param.getProductID());
+    }
+
+    @PostMapping("search")
+    public R search(@RequestBody ProductSearchParam param){
+        return productService.search(param);
     }
 }
